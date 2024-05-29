@@ -2,6 +2,8 @@
 
 void CursorLocation(int x, int y);
 
+//-----------------------------------------------------------------
+//인터페이스 칸에서 벌어지는 일들을 통제하는 클래스들의 정의
 interFace::interFace()
 	:showInfoX(35), showInfoY(0) {
 }
@@ -42,7 +44,18 @@ void interFace::printMessage() {
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+//-----------------------------------------------------------------
+//오목 판에서 벌어지는 일들을 통제하는 클래스들의 정의
 checkerBoard::checkerBoard()
 	:LandPositionX(0), LandPositionY(0) {
 
@@ -50,6 +63,7 @@ checkerBoard::checkerBoard()
 
 checkerBoard::~checkerBoard(){}
 
+//오목판 출력
 void checkerBoard::printCheckerBoard() {
 	cout << "┌";
 	for (int i = 0; i < SIZE - 2; i++) {
@@ -73,7 +87,18 @@ void checkerBoard::printCheckerBoard() {
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+//-------------------------------------------------------------------
+//전역 함수, 해당 위치로 커서를 이동하는 함수
 void CursorLocation(int x, int y) {
 	COORD pos; //COORD 커서의 위치를 저장하는 구조체
 	pos.X = x;
