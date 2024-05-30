@@ -227,14 +227,27 @@ int GameManager::getStone(int X, int Y) {
 		gotoxy(X * 2, Y);
 		if (colorOfStone == true) {
 			//착수
+			check[X][Y] = 1;
 			printf("●");
 			//턴을 넘김
 			colorOfStone = false;
+			if (getWin(X, Y)) {
+				itf.printMessage("백돌이 이겼습니다. !!!");
+				Sleep(3000);
+				exit(0);
+			}
+
 			itf.printMessage("흑돌을 놓을 차례입니다.");
 		}
 		else {
+			check[X][Y] = 2;
 			printf("○");
 			colorOfStone = true;
+			if (getWin(X, Y)) {
+				itf.printMessage("흑돌이 이겼습니다. !!!");
+				Sleep(3000);
+				exit(0);
+			}
 			itf.printMessage("백돌을 놓을 차례입니다.");
 		}
 		check[X][Y] = 1;
@@ -242,6 +255,57 @@ int GameManager::getStone(int X, int Y) {
 	}
 }
 
+int GameManager::getWin(int X, int Y) {
+	int cnt;
+	int color = check[X][Y];
+	//행 row 열 col
+
+	// 가로 돌이 5개 있는지 판별
+	cnt = 1;
+	int row = 1;
+	while (check[X + row++][Y] == color) { cnt++; }
+	row = 1;
+	while (check[X - row++][Y] == color) { cnt++; }
+	if (cnt == 5) return 1;
+
+	// 세로 돌이 5개 있는지 판별
+	cnt = 1;
+	int col = 1;
+	while (check[X][Y + col++] == color) { cnt++; }
+	col = 1;
+	while (check[X][Y - col++] == color) { cnt++; }
+	if (cnt == 5) return 1;
+
+	//대각선(왼쪽위 ~ 오른쪽 아래) 돌이 5개 있는지 판별
+	cnt = 1;
+	int diag = 1;
+	while (check[X - diag][Y + diag] == color) {
+		cnt++;
+		diag++;
+	}
+	diag = 1;
+	while (check[X + diag][Y - diag] == color) {
+		cnt++;
+		diag++;
+	}
+	if (cnt == 5) return 1;
+
+	//대각선(왼쪽아래 ~ 오른쪽 위) 돌이 5개 있는지 판별
+	cnt = 1;
+	diag = 1;
+	while (check[X + diag][Y + diag] == color) {
+		cnt++;
+		diag++;
+	}
+	diag = 1;
+	while (check[X - diag][Y - diag] == color) {
+		cnt++;
+		diag++;
+	}
+	if (cnt == 5) return 1;
+
+	return 0;
+}
 
 
 //-------------------------------------------------------------------
@@ -252,3 +316,5 @@ void gotoxy(int x, int y) {
 	pos.Y = y;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), pos);
 }
+
+
