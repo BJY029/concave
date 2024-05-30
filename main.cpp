@@ -1,11 +1,8 @@
 #include "head.h"
 
 int main() {
-	system("mode con: cols=150 lines=150");
-	interFace iF;
-	checkerBoard cB;
-	cB.printCheckerBoard();
-	iF.printGrid();
-	Sleep(3000);
+	checkerBoard start; //게임시작(생성자로 인해 콘솔에 게임판과 인터페이스 그리드 출력)
+	start.updateCheckerBoard();//착수 과정 시작
+	//Sleep(3000);
 	return 0;
 }
