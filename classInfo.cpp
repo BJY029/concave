@@ -133,7 +133,7 @@ void checkerBoard::updateCheckerBoard() {
 
 		//만약 명령에 따른 상태가 참(격자 안에 머문 경우)인 경우
 		if (state) {
-			itf.printWrongKey("                           \r");
+			itf.printWrongKey("                            \r");
 			gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager함수의 x와 y 값으로 부터 불러와서 커서 이동
 		}
 		else {
@@ -236,8 +236,7 @@ int GameManager::getStone(int X, int Y) {
 				Sleep(3000);
 				exit(0);
 			}
-
-			itf.printMessage("흑돌을 놓을 차례입니다.");
+			else itf.printMessage("흑돌을 놓을 차례입니다.");
 		}
 		else {
 			check[X][Y] = 2;
@@ -248,14 +247,14 @@ int GameManager::getStone(int X, int Y) {
 				Sleep(3000);
 				exit(0);
 			}
-			itf.printMessage("백돌을 놓을 차례입니다.");
+			else itf.printMessage("백돌을 놓을 차례입니다.");
 		}
-		check[X][Y] = 1;
+
 		return 1;
 	}
 }
 
-int GameManager::getWin(int X, int Y) {
+bool GameManager::getWin(int X, int Y) {
 	int cnt;
 	int color = check[X][Y];
 	//행 row 열 col
@@ -304,7 +303,7 @@ int GameManager::getWin(int X, int Y) {
 	}
 	if (cnt == 5) return 1;
 
-	return 0;
+	return false;
 }
 
 
