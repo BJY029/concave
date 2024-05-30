@@ -19,7 +19,6 @@ public:
 	~interFace();
 	void printGrid();
 	void printMessage(string message);
-	void printWrongLand(string message);
 	void printWrongKey(string message);
 };
 
@@ -43,7 +42,7 @@ public:
 	int getY();
 	bool moveX(int direction);
 	bool moveY(int direction);
-	void getStone(int X, int Y);
+	int getStone(int X, int Y);
 };
 
 //gameManager 클래스에서 승리 조건 판단 함수 구현

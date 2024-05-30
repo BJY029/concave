@@ -49,12 +49,6 @@ void interFace::printMessage(string message) {
 	cout << message;
 }
 
-//이미 착수된 곳에 착수를 시도할 경우 오류 메시지를 출력하는 함수
-void interFace::printWrongLand(string message) {
-	gotoxy(38, 3);
-	cout << message;
-}
-
 //잘못된 키를 입력한 경우 오류 메시지를 출력하는 함수
 void interFace::printWrongKey(string message) {
 	gotoxy(38, 2);
@@ -111,7 +105,7 @@ void checkerBoard::updateCheckerBoard() {
 	//사용자의 입력이 오목판을 벗어날 경우 게임 종료
 	while (1) {
 		int direction; //명령어를 저장할 변수 선언
-		bool flag;
+		int flag;
 		bool state; //현재 상태를 저장할 변수 선언
 		direction = _getch(); //https://blockdmask.tistory.com/399, 명령입력 받기
 
@@ -126,8 +120,10 @@ void checkerBoard::updateCheckerBoard() {
 				break;
 			case 'd': state = gamm.moveX(1);
 				break;
-			case 'h': gamm.getStone(gamm.getX(), gamm.getY());
-				state = 1;
+			case 'h': 
+				flag = gamm.getStone(gamm.getX(), gamm.getY());
+				if (flag == 1) state = true;
+				else if(flag == 2) state = false;
 				break;
 			default: //default에 해당하는 값은 잘못된 값을 입력하는 경우, 구분하기 위하여 flag에 0값 대입
 				state = 0;
@@ -137,16 +133,20 @@ void checkerBoard::updateCheckerBoard() {
 
 		//만약 명령에 따른 상태가 참(격자 안에 머문 경우)인 경우
 		if (state) {
-			itf.printWrongKey("                           ");
+			itf.printWrongKey("                           \r");
 			gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager함수의 x와 y 값으로 부터 불러와서 커서 이동
 		}
 		else {
 			if (flag == 0) { //잘못된 명령으로 인한 오류인 경우
-				itf.printWrongKey("잘못된 명령어입니다.");
+				itf.printWrongKey("잘못된 명령어입니다.\r");
 				gotoxy(gamm.getX() * 2, gamm.getY());
 			}
-			else { //오목판을 벗어나서 발생한 오류인 경우
-				itf.printWrongKey("오목판을 벗어났습니다.");
+			else if(flag == 1) { //오목판을 벗어나서 발생한 오류인 경우
+				itf.printWrongKey("오목판을 벗어났습니다.\r");
+				gotoxy(gamm.getX() * 2, gamm.getY());
+			}
+			else if (flag == 2) {
+				itf.printWrongKey("돌을 다른 곳에 두세요!!\r");
 				gotoxy(gamm.getX() * 2, gamm.getY());
 			}
 		}
@@ -217,15 +217,13 @@ bool GameManager::moveY(int direction) {
 //3
 //만약 커서위치에 돌이 이미 놓여져 있으면
 //"돌을 다른 곳에 두세요 !!" 출력후 턴 이어가기
-void GameManager::getStone(int X, int Y) {
+int GameManager::getStone(int X, int Y) {
 	checkError = check[X][Y] ? true : false;
 
 	if (checkError) {
-		itf.printWrongLand("돌을 다른 곳에 두세요!!");
-		gotoxy(X * 2, Y);
+		return 2;
 	}
 	else {
-		itf.printWrongLand("                       ");
 		gotoxy(X * 2, Y);
 		if (colorOfStone == true) {
 			//착수
@@ -233,8 +231,6 @@ void GameManager::getStone(int X, int Y) {
 			//턴을 넘김
 			colorOfStone = false;
 			itf.printMessage("흑돌을 놓을 차례입니다.");
-			/*gotoxy(38, 5);
-			cout << "흑돌을 놓을 차례입니다";*/
 		}
 		else {
 			printf("○");
@@ -242,6 +238,7 @@ void GameManager::getStone(int X, int Y) {
 			itf.printMessage("백돌을 놓을 차례입니다.");
 		}
 		check[X][Y] = 1;
+		return 1;
 	}
 }
 
