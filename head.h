@@ -18,17 +18,24 @@ public:
 	interFace();
 	~interFace();
 	void printGrid();
-	void printMessage();
+	void printMessage(string message);
+	void printWrongLand(string message);
+	void printWrongKey(string message);
 };
 
 
- 
 //게임 동작을 통제하는 클래스
 class GameManager {
 private:
+	interFace itf;
+	// x좌표, y좌표
 	int posX;
 	int posY;
-
+	//'h'를 입력한 위치에 돌이 있는지 확인
+	int check[15][15];
+	// 돌의 색깔(false = 흑돌, true = 백돌)
+	bool colorOfStone;
+	bool checkError;
 public:
 	GameManager();
 	~GameManager();
@@ -36,6 +43,7 @@ public:
 	int getY();
 	bool moveX(int direction);
 	bool moveY(int direction);
+	void getStone(int X, int Y);
 };
 
 //gameManager 클래스에서 승리 조건 판단 함수 구현
