@@ -178,12 +178,12 @@ GameManager::GameManager()
 //소멸자
 GameManager::~GameManager() { }
 
-//게임매니져의 x값을 반환
+//게임매니져의 x값(커서 위치 x값)을 반환
 int GameManager::getX() {
     return posX;
 }
 
-//게임 매니져의 y값을 반환
+//게임 매니져의 y(커서 위치 y값)값을 반환
 int GameManager::getY() {
     return posY;
 }
