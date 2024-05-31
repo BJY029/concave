@@ -315,6 +315,7 @@ bool GameManager::getWin(int X, int Y) {
    전역 함수 정의 : 해당 위치로 커서를 이동하는 함수
 *************************************************************************/
 
+//windows.h 헤더파일에 있음
 void gotoxy(int x, int y) {
     COORD pos; //COORD 커서의 위치를 저장하는 구조체
     pos.X = x;
