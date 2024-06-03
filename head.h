@@ -1,9 +1,13 @@
-#pragma once	//다중 선언되는 것을 방지
-#include<Windows.h> //커서이동 기능을 위해 선언
-#include<conio.h>  //getch을 사용하기 위해 선언
-#include<cstring> //문자열 사용을 위한 선언
-#include<iostream> //기본 헤더 파일
-#define SIZE 15  //오목판 크기를 매크로 상수로 선언
+#pragma once
+#include<Windows.h>
+#include<cstdio>
+#include<conio.h>
+#include<array>
+#include<cstring>
+#include<iostream>
+#include<vector>
+#include<algorithm>
+#define SIZE 15
 using namespace std;
 
 //인터페이스 칸에서 일어나는 일들을 통제하는 클래스
@@ -26,6 +30,7 @@ class GameManager {
 private:
 	//인터페이스 클래스의 객체 생성
 	interFace itf;
+	
 	//x좌표, y좌표
 	int posX;
 	int posY;
@@ -34,6 +39,8 @@ private:
 	//돌의 색깔(true = 흑돌, false = 백돌)
 	bool colorOfStone;
 	bool checkError;
+	vector<pair<int, int>> moveWHistory;
+	vector<pair<int, int>> moveBHistory;
 public:
 	GameManager();
 	~GameManager();
@@ -43,6 +50,9 @@ public:
 	bool moveY(int direction);
 	int getStone(int X, int Y);
 	bool getWin(int X, int Y);
+	void initAll();
+	bool cancel();
+	void DoAJob(pair<int, int> info);
 };
 
 //오목 판에서 일어나는 일들을 통제하는 클래스
@@ -52,9 +62,13 @@ private:
 	interFace itf;
 	int LandPositionX; //착수 위치 x좌표
 	int LandPositionY; //착수 위치 y좌표
+	//착수한 위치 스택에 저장
 public:
 	checkerBoard();
 	~checkerBoard();
 	void printCheckerBoard();
 	void updateCheckerBoard();
+
 };
+ 
+
