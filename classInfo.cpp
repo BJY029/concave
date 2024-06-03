@@ -154,8 +154,10 @@ void checkerBoard::updateCheckerBoard() {
             itf.printWrongKey("                            \r");
             gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager 멤버함수로부터 x와 y 값 불러와서 커서 이동
             if (drawCount == 255) {
-                itf.printWrongKey("게임판이 꽉 찼습니다. 잠시후에 재시작 합니다.\r");
+                itf.printWrongKey("무승부! 잠시후에 재시작 합니다.\r");
                 Sleep(2000);
+                gotoxy(38, 2);
+                cout << "                                ";
                 gamm.initAll();
             }
         }
