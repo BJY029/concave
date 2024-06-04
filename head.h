@@ -22,6 +22,7 @@ public:
 	void printMessage(string message);
 	void printWrongLand(string message);
 	void printWrongKey(string message);
+
 };
 
 
@@ -30,7 +31,7 @@ class GameManager {
 private:
 	//인터페이스 클래스의 객체 생성
 	interFace itf;
-	
+
 	//x좌표, y좌표
 	int posX;
 	int posY;
@@ -41,6 +42,7 @@ private:
 	bool checkError;
 	vector<pair<int, int>> moveWHistory;
 	vector<pair<int, int>> moveBHistory;
+	vector<pair<int, int>> moveHistory;
 public:
 	GameManager();
 	~GameManager();
@@ -68,7 +70,6 @@ public:
 	~checkerBoard();
 	void printCheckerBoard();
 	void updateCheckerBoard();
-
 };
- 
+
 

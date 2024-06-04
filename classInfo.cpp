@@ -3,6 +3,7 @@
 //전역함수 선언
 void gotoxy(int x, int y);
 
+
 /************************************************************************
    인터페이스 칸에서 벌어지는 일들을 통제하는 클래스들의 선언부 정의
 *************************************************************************/
@@ -15,37 +16,43 @@ interFace::interFace()
 //인터페이스 소멸자
 interFace::~interFace() {}
 
+
+
 //멤버함수 정의
 void interFace::printGrid() {
+
+
     //명령어의 정보를 알려주는 그리드의 칸 출력
     gotoxy(showInfoX, showInfoY); //커서 위치 이동
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 31; i++) {
         cout << "-";
     }
     for (int i = 1; i < 14; i++) {
         gotoxy(showInfoX, showInfoY + i);
         cout << "|";
-        gotoxy(showInfoX + 39, showInfoY + i);
+        gotoxy(showInfoX + 30, showInfoY + i);
         cout << "|";
     }
     gotoxy(showInfoX, showInfoY + 14);
-    for (int i = 0; i < 40; i++) {
+    for (int i = 0; i < 31; i++) {
         cout << "-";
     }
 
     //명령어 설명 내용을 그리드 내에 출력
-    gotoxy(showInfoX + 3, showInfoY + 8);
+    gotoxy(showInfoX + 2, showInfoY + 8);
     cout << "w키 : 위로 한칸 이동.";
-    gotoxy(showInfoX + 3, showInfoY + 9);
+    gotoxy(showInfoX + 2, showInfoY + 9);
     cout << "a키 : 왼쪽로 한칸 이동.";
-    gotoxy(showInfoX + 3, showInfoY + 10);
+    gotoxy(showInfoX + 2, showInfoY + 10);
     cout << "s키 : 아래로 한칸 이동.";
-    gotoxy(showInfoX + 3, showInfoY + 11);
+    gotoxy(showInfoX + 2, showInfoY + 11);
     cout << "d키 : 오른쪽으로 한칸 이동.";
-    gotoxy(showInfoX + 3, showInfoY + 12);
+    gotoxy(showInfoX + 2, showInfoY + 12);
     cout << "h키 : 오목 판에 착수.";
-    gotoxy(showInfoX + 3, showInfoY + 13);
+    gotoxy(showInfoX + 2, showInfoY + 13);
     cout << "r키 : 한 수 무르기.";
+
+
 }
 
 //현재 착수해야 하는 플레이어를 알려주는 멤버함수 정의
@@ -79,27 +86,32 @@ checkerBoard::~checkerBoard() {}
 
 //오목판 출력 멤버함수
 void checkerBoard::printCheckerBoard() {
+
     cout << "┌";
     for (int i = 0; i < SIZE - 2; i++) {
         cout << "-┬";
     }
-    cout << "-┐" << endl;
+    cout << "-┐";
+
 
     for (int i = 0; i < SIZE - 2; i++) {
+        gotoxy(0, i + 1);
         cout << "├";
         for (int j = 0; j < SIZE - 2; j++) {
             cout << "-┼";
         }
-        cout << "-┤" << endl;
-    }
+        cout << "-┤";
 
+    }
+    gotoxy(0, 14);
     cout << "└";
     for (int i = 0; i < SIZE - 2; i++) {
         cout << "-┴";
     }
     cout << "-┘" << endl;
-}
 
+
+}
 
 //오목판 착수 멤버함수 : 각 입력에 따라 커서를 움직이고, 착수를 누르면 해당 위치에 오목알 배치
 void checkerBoard::updateCheckerBoard() {
@@ -129,7 +141,7 @@ void checkerBoard::updateCheckerBoard() {
                 break;
             case 'd': state = gamm.moveX(1);
                 break;
-            case 'r': 
+            case 'r':
                 cancle_check = gamm.cancel(); //무르기 함수 발동
                 if (cancle_check) drawCount--;//만약 무르기가 성공하면, drawCount값 -1
                 state = false; //state를 초기화 하지 않으면 오류 발생
@@ -151,13 +163,13 @@ void checkerBoard::updateCheckerBoard() {
 
         //만약 명령에 따른 상태가 참(격자 안에 머문 경우)인 경우
         if (state) {
-            itf.printWrongKey("                            \r");
+            itf.printWrongKey("                          \r");
             gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager 멤버함수로부터 x와 y 값 불러와서 커서 이동
             if (drawCount == 255) {
                 itf.printWrongKey("무승부! 잠시후에 재시작 합니다.\r");
                 Sleep(2000);
                 gotoxy(38, 2);
-                cout << "                                ";
+                cout << "                              ";
                 gamm.initAll();
             }
         }
@@ -174,7 +186,7 @@ void checkerBoard::updateCheckerBoard() {
                 itf.printWrongKey("돌을 다른 곳에 두세요!!\r");
                 gotoxy(gamm.getX() * 2, gamm.getY());
             }
-            
+
         }
     }
 }
@@ -249,7 +261,7 @@ bool GameManager::moveY(int direction) {
 int GameManager::getStone(int X, int Y) {
     checkError = check[X][Y] ? true : false;
     static int b_victory = 0, w_victory = 0;
-
+    moveHistory.push_back(make_pair(X * 2, Y));
     if (checkError) {
         return 2;
     }
@@ -258,20 +270,17 @@ int GameManager::getStone(int X, int Y) {
         if (colorOfStone == true) { //흑돌부터 게임 시작
             //착수
             check[X][Y] = 1;
-            moveWHistory.push_back(make_pair(X*2, Y)); //무르기 스택에 현재 값 저장
             printf("○");
 
-            //턴을 넘김
-            colorOfStone = false;
             if (getWin(X, Y)) { //흑돌의 오목이 완성된 경우
                 itf.printMessage("흑돌이 이겼습니다. !!!");
                 b_victory++;
                 gotoxy(0, 18);
                 cout << "흑돌 " << b_victory << " : " << "백돌 " << w_victory << endl;
                 if (b_victory == 3) {
-                        gotoxy(0, 19);
-                        cout << "흑돌이 먼저 3승을 달성했습니다!\n" << "게임을 종료합니다." << endl;
-                        exit(0);
+                    gotoxy(0, 19);
+                    cout << "흑돌이 먼저 3승을 달성했습니다!\n" << "게임을 종료합니다." << endl;
+                    exit(0);
                 }
                 else {
                     gotoxy(0, 19);
@@ -282,11 +291,14 @@ int GameManager::getStone(int X, int Y) {
                 }
                 initAll(); //초기화 함수 불러오기
             }
-            else itf.printMessage("백돌을 놓을 차례입니다.");
+            else {
+                //턴을 넘김
+                itf.printMessage("백돌을 놓을 차례입니다.");
+                colorOfStone = false;
+            }
         }
         else { //백돌 시작
             check[X][Y] = 2;
-            moveBHistory.push_back(make_pair(X*2, Y)); //무르기 스택에 현재 값 저장
             printf("●");
             //턴을 넘김
             colorOfStone = true;
@@ -296,9 +308,9 @@ int GameManager::getStone(int X, int Y) {
                 gotoxy(0, 18);
                 cout << "흑돌 " << b_victory << " : " << "백돌 " << w_victory << endl;
                 if (w_victory == 3) {
-                        gotoxy(0, 19);
-                        cout << "백돌이 먼저 3승을 달성했습니다!\n" << "게임을 종료합니다." << endl;
-                        exit(0);
+                    gotoxy(0, 19);
+                    cout << "백돌이 먼저 3승을 달성했습니다!\n" << "게임을 종료합니다." << endl;
+                    exit(0);
                 }
                 else {
                     gotoxy(0, 19);
@@ -319,32 +331,25 @@ int GameManager::getStone(int X, int Y) {
 
 //무르기 함수
 bool GameManager::cancel() {
-    if (colorOfStone == true) {//현재 차례가 백돌인 경우
-        if (moveWHistory.size() == 0) { //만약 스택에 아무것도 없으면, 무르기 실패 출력하고 false 반환
-            itf.printWrongKey("무르기를 할 수 없습니다.!!\r");
-            gotoxy(getX() * 2, getY());
-            return false;
-        }
-        else {
-            DoAJob(moveWHistory.back()); //백돌 스택 맨 위의 좌표에 가서 값 바꿈(바둑판 기호 출력)
-            check[moveWHistory.back().first / 2][moveWHistory.back().second] = 0; //check배열 초기화
-            moveWHistory.pop_back(); //백돌 스택 pop
-        }   
+
+    if (moveHistory.size() == 0) { //만약 스택에 아무것도 없으면, 무르기 실패 출력하고 false 반환
+        itf.printWrongKey("무르기를 할 수 없습니다!!\r");
+        gotoxy(getX() * 2, getY());
+        return false;
     }
-    else {//현재 차례가 흑돌인 경우
-        if (moveBHistory.size() == 0) {//만약 스택이 빈 경우, 무르기 실패 출력후 false 반환
-            itf.printWrongKey("무르기를 할 수 없습니다.!!\r");
-            gotoxy(getX() * 2, getY());
-            return false;
-        }
-        else {
-            DoAJob(moveBHistory.back());//흑돌 스택 맨 위 좌표에 바둑판 기호 출력
-            check[moveBHistory.back().first / 2][moveBHistory.back().second] = 0; //check 배열 초기화
-            moveBHistory.pop_back(); //흑돌 스택 pop
-        }
+    DoAJob(moveHistory.back());
+    check[moveHistory.back().first / 2][moveHistory.back().second] = 0; //check 배열 초기화
+    moveHistory.pop_back(); //흑돌 스택 pop
+    if (colorOfStone == true) {
+        colorOfStone = false;
+        itf.printMessage("백돌을 놓을 차례입니다.");
+    }
+    else {
+        colorOfStone = true;
+        itf.printMessage("흑돌을 놓을 차례입니다.");
     }
     //무르기 성공한 경우 공통적으로 실행하는 코드들
-    itf.printWrongKey("무르기 성공.!!          \r"); //무르기 성공 출력
+    itf.printWrongKey("무르기 성공!!         \r"); //무르기 성공 출력
     gotoxy(getX() * 2, getY()); //현재 커서 위치로 이동
     return true; //true 반환
 }
@@ -416,7 +421,7 @@ void GameManager::DoAJob(pair<int, int> info) {
             gotoxy(lastXY.first, lastXY.second);
             cout << "┌";
         }
-        else if (lastXY.second == 28) {
+        else if (lastXY.second == 14) {
             gotoxy(lastXY.first, lastXY.second);
             cout << "└";
         }
@@ -428,29 +433,29 @@ void GameManager::DoAJob(pair<int, int> info) {
     else if (lastXY.first == 28) {
         if (lastXY.second == 0) {
             gotoxy(lastXY.first, lastXY.second);
-            cout << "-┐";
+            cout << "┐";
         }
-        else if (lastXY.second == 28) {
+        else if (lastXY.second == 14) {
             gotoxy(lastXY.first, lastXY.second);
-            cout << "-┘";
+            cout << "┘";
         }
         else {
             gotoxy(lastXY.first, lastXY.second);
-            cout << "-┤";
+            cout << "┤";
         }
     }
     else {
         if (lastXY.second == 0) {
-            gotoxy(lastXY.first - 1, lastXY.second);
-            cout << "-┬";
+            gotoxy(lastXY.first, lastXY.second);
+            cout << "┬";
         }
-        else if (lastXY.second == 28) {
-            gotoxy(lastXY.first - 1, lastXY.second);
-            cout << "-┴";
+        else if (lastXY.second == 14) {
+            gotoxy(lastXY.first, lastXY.second);
+            cout << "┴";
         }
         else {
-            gotoxy(lastXY.first - 1, lastXY.second);
-            cout << "-┼";
+            gotoxy(lastXY.first, lastXY.second);
+            cout << "┼";
         }
     }
 }
