@@ -165,7 +165,7 @@ void checkerBoard::updateCheckerBoard() {
         if (state) {
             itf.printWrongKey("                          \r");
             gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager 멤버함수로부터 x와 y 값 불러와서 커서 이동
-            if (drawCount == 255) {
+            if (drawCount == 225) {
                 itf.printWrongKey("무승부! 잠시후에 재시작 합니다.\r");
                 Sleep(2000);
                 gotoxy(38, 2);
@@ -362,17 +362,17 @@ bool GameManager::getWin(int X, int Y) {
     // 가로 방향으로 돌이 5개 있는지 판별
     cnt = 1;
     int row = 1;
-    while (check[X + row++][Y] == color) { cnt++; } //동쪽으로 이동(->)하며 검사
+    while (check[X + row++][Y] == color && X + row <= 15  ) { cnt++; } //동쪽으로 이동(->)하며 검사
     row = 1;
-    while (check[X - row++][Y] == color) { cnt++; } //서쪽으로 이동(<-)하며 검사
+    while (check[X - row++][Y] == color && X - row >= -1) { cnt++; } //서쪽으로 이동(<-)하며 검사
     if (cnt == 5) return true;
 
     // 세로 방향으로 돌이 5개 있는지 판별
     cnt = 1;
     int col = 1;
-    while (check[X][Y + col++] == color) { cnt++; } //남쪽으로 이동하며 검사
+    while (check[X][Y + col++] == color && Y + col <= 15) { cnt++; } //남쪽으로 이동하며 검사
     col = 1;
-    while (check[X][Y - col++] == color) { cnt++; } //북쪽으로 이동하며 검사
+    while (check[X][Y - col++] == color && Y - col >= -1) { cnt++; } //북쪽으로 이동하며 검사
     if (cnt == 5) return 1;
 
     //대각선(왼쪽아래 ~ 오른쪽 위) 방향으로 돌이 5개 있는지 판별
