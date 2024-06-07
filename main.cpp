@@ -2,7 +2,7 @@
 
 int main() {
 	system("mode con: cols=500 lines=50");
-
+	//
 
 
 	checkerBoard start; //게임시작(생성자로 인해 콘솔에 게임판과 인터페이스 그리드 출력)
