@@ -40,8 +40,6 @@ private:
 	//µ¹ÀÇ »ö±ò(true = Èæµ¹, false = ¹éµ¹)
 	bool colorOfStone;
 	bool checkError;
-	vector<pair<int, int>> moveWHistory;
-	vector<pair<int, int>> moveBHistory;
 	vector<pair<int, int>> moveHistory;
 public:
 	GameManager();
@@ -50,7 +48,7 @@ public:
 	int getY();
 	bool moveX(int direction);
 	bool moveY(int direction);
-	int getStone(int X, int Y);
+	int getStone();
 	bool getWin(int X, int Y);
 	void initAll();
 	bool cancel();

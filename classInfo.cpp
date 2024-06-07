@@ -121,17 +121,18 @@ void checkerBoard::updateCheckerBoard() {
     gotoxy(0, 0);
 
     int drawCount = 0;
-    //사용자의 입력이 오목판을 벗어날 경우 경고문 출력하고 게임 이어서 진행
+    
     while (1) {
         int direction; //명령어를 저장할 변수 선언
-        bool cancle_check;
-        int flag;
+        bool cancle_check; //무르기 성공 여부를 저장할 bool형 변수 선언
+        int flag; //오류 상황을 구분하기 위한 변수 선언
         bool state; //현재 상태를 저장할 변수 선언
         direction = _getch(); //키보드로 명령 입력 하면 아스키코드로 변환되어 저장
 
         flag = 1; //flag 값 1로 초기화
 
         //각 입력에 따른 상태 초기화
+        //각 입력에 따라 해당 좌표축으로 이동해야 하는 정보를 전송하고, 이동했을 시 유효한 위치이면 true, 아니면 false 반환
         switch (direction) {
             case 'w': state = gamm.moveY(-1);
                 break;
@@ -148,8 +149,9 @@ void checkerBoard::updateCheckerBoard() {
                 flag = 4; //아무것도 실행하지 않기 위한 flag 값 설정
                 break;
             case 'h':
-                flag = gamm.getStone(gamm.getX(), gamm.getY());
-                if (flag == 1) {
+                //gameManager 함수의 check배열의 x,y 좌표를 불러와서, getStone에 인자로 전달
+                flag = gamm.getStone();//인자로 함수를 써서 불러오지 않고 그냥 해당 함수의 posX, posY값 사용해도 됨
+                if (flag == 1) { //착수가 오류없이 진행된 경우
                     drawCount++;
                     state = true;
                 }
@@ -165,7 +167,7 @@ void checkerBoard::updateCheckerBoard() {
         if (state) {
             itf.printWrongKey("                          \r");
             gotoxy(gamm.getX() * 2, gamm.getY()); //GameManager 멤버함수로부터 x와 y 값 불러와서 커서 이동
-            if (drawCount == 225) {
+            if (drawCount == 225) { //해당 입력으로 오목 판이 다 찬 경우 실행
                 itf.printWrongKey("무승부! 잠시후에 재시작 합니다.\r");
                 Sleep(2000);
                 gotoxy(38, 2);
@@ -173,7 +175,7 @@ void checkerBoard::updateCheckerBoard() {
                 gamm.initAll();
             }
         }
-        else {
+        else {//오류가 발생한 경우
             if (flag == 0) { //잘못된 명령으로 인한 오류인 경우
                 itf.printWrongKey("잘못된 명령어입니다.    \r");
                 gotoxy(gamm.getX() * 2, gamm.getY());
@@ -210,14 +212,12 @@ GameManager::GameManager()
         }
         checkError = false;
     }
-    moveWHistory.clear();
-    moveBHistory.clear();
 }
 
 //소멸자
 GameManager::~GameManager() { }
 
-//게임매니져의 x값을 반환
+//게임매니져의 x값을 반환, check
 int GameManager::getX() {
     return posX;
 }
@@ -258,21 +258,21 @@ bool GameManager::moveY(int direction) {
 (3)돌을 놓을 때마다 알고리즘을 돌려 오목이 완성되는지 판단.
    만약 5개의 돌이 놓여져 오목이 완성되면 안내문 출력하고 프로그램종료
 */
-int GameManager::getStone(int X, int Y) {
-    checkError = check[X][Y] ? true : false;
+int GameManager::getStone() {
+    checkError = check[posX][posY] ? true : false;
     static int b_victory = 0, w_victory = 0;
-    moveHistory.push_back(make_pair(X * 2, Y));
     if (checkError) {
         return 2;
     }
     else {
-        gotoxy(X * 2, Y);
+        moveHistory.push_back(make_pair(posX * 2, posY));
+        gotoxy(posX * 2, posY);
         if (colorOfStone == true) { //흑돌부터 게임 시작
             //착수
-            check[X][Y] = 1;
+            check[posX][posY] = 1;
             printf("○");
 
-            if (getWin(X, Y)) { //흑돌의 오목이 완성된 경우
+            if (getWin(posX, posY)) { //흑돌의 오목이 완성된 경우
                 itf.printMessage("흑돌이 이겼습니다. !!!");
                 b_victory++;
                 gotoxy(0, 18);
@@ -298,11 +298,11 @@ int GameManager::getStone(int X, int Y) {
             }
         }
         else { //백돌 시작
-            check[X][Y] = 2;
+            check[posX][posY] = 2;
             printf("●");
             //턴을 넘김
             colorOfStone = true;
-            if (getWin(X, Y)) { //백돌의 오목이 완성된 경우
+            if (getWin(posX, posY)) { //백돌의 오목이 완성된 경우
                 itf.printMessage("백돌이 이겼습니다. !!!");
                 w_victory++;
                 gotoxy(0, 18);
@@ -324,8 +324,6 @@ int GameManager::getStone(int X, int Y) {
             else itf.printMessage("흑돌을 놓을 차례입니다.");
         }
     }
-
-
     return 1;
 }
 
@@ -362,7 +360,7 @@ bool GameManager::getWin(int X, int Y) {
     // 가로 방향으로 돌이 5개 있는지 판별
     cnt = 1;
     int row = 1;
-    while (check[X + row++][Y] == color && X + row <= 15  ) { cnt++; } //동쪽으로 이동(->)하며 검사
+    while (check[X + row++][Y] == color && X + row <= SIZE  ) { cnt++; } //동쪽으로 이동(->)하며 검사
     row = 1;
     while (check[X - row++][Y] == color && X - row >= -1) { cnt++; } //서쪽으로 이동(<-)하며 검사
     if (cnt == 5) return true;
@@ -370,7 +368,7 @@ bool GameManager::getWin(int X, int Y) {
     // 세로 방향으로 돌이 5개 있는지 판별
     cnt = 1;
     int col = 1;
-    while (check[X][Y + col++] == color && Y + col <= 15) { cnt++; } //남쪽으로 이동하며 검사
+    while (check[X][Y + col++] == color && Y + col <= SIZE) { cnt++; } //남쪽으로 이동하며 검사
     col = 1;
     while (check[X][Y - col++] == color && Y - col >= -1) { cnt++; } //북쪽으로 이동하며 검사
     if (cnt == 5) return 1;
